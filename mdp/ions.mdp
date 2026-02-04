@@ -1,0 +1,29 @@
+; ions.mdp - Generation of ions.tpr for gmx genion
+; ------------------------------------------------
+; This file is NOT for simulation. It is a container for coordinates/topology
+; used to place ions.
+
+; Minimization parameters (required to satisfy grompp syntax)
+integrator  = steep         ; Steepest descent
+emtol       = 1000.0        ; Stop minimization when the maximum force < 1000.0 (kJ/mol/nm)
+emstep      = 0.01          ; Minimization step size (nm)
+nsteps      = 50000         ; Maximum number of (minimization) steps to perform
+
+; Neighbor searching
+nstlist         = 10        ; Frequency to update neighbor list
+cutoff-scheme   = Verlet
+pbc             = xyz       ; Periodic boundary conditions
+rlist           = 1.2       ; Cut-off for making neighbor list (nm)
+
+; Electrostatics
+; We use 'cutoff' here because the system is not yet neutral.
+; PME would error out on a non-neutral system.
+coulombtype     = cutoff    ; use 'cutoff' here because the system is not yet neutral.
+rcoulomb        = 1.2       ; Short-range electrostatic cut-off
+
+; Van der Waals (CHARMM36 Compliant)
+vdwtype         = cutoff
+vdw-modifier    = force-switch ; STRICTLY REQUIRED for CHARMM36
+rvdw-switch     = 1.0          ; Switching starts at 1.0 nm
+rvdw            = 1.2          ; Cut-off at 1.2 nm
+DispCorr        = no           ; CHARMM36 does NOT use dispersion correction

@@ -1,0 +1,61 @@
+; nvt.mdp - NVT Equilibration (Constant Volume/Temp)
+; ------------------------------------------------
+define      = -DPOSRES      ; Position restraints on protein heavy atoms
+
+; Run Control
+integrator  = md            ; Leap-frog integrator
+nsteps      = 500000        ; 1 ns (500,000 steps * 2 fs)
+dt          = 0.002         ; 2 fs timestep
+
+; Output Control
+nstxout     = 0             ; Suppress massive trajectory files
+nstvout     = 0             ; Suppress velocities
+nstenergy   = 5000          ; Save energy every 10 ps
+nstlog      = 5000          ; Update log every 10 ps
+nstxout-compressed = 5000   ; Save XTC trajectory every 10 ps
+compressed-x-grps  = System
+
+; Center of Mass (COMM) Removal
+; Prevents "flying ice cube" effect
+comm-mode   = Linear
+nstcomm     = 100
+
+; Bond parameters
+continuation    = no            ; first dynamics run
+constraint_algorithm = lincs    ; Holonomic constraints 
+constraints     = h-bonds       ; Bonds involving H are constrained
+lincs_iter      = 1             ; accuracy of LINCS
+lincs_order     = 4             ; also related to accuracy
+
+; Neighbor Searching
+cutoff-scheme = Verlet
+nstlist       = 20
+rlist         = 1.2
+pbc           = xyz
+
+; Electrostatics
+coulombtype     = PME
+rcoulomb        = 1.2
+pme_order       = 4
+fourierspacing  = 0.12
+
+; Van der Waals (CHARMM36 Compliant)
+vdwtype         = cutoff
+vdw-modifier    = force-switch
+rvdw-switch     = 1.0
+rvdw            = 1.2
+DispCorr        = no
+
+; Temperature Coupling
+tcoupl      = V-rescale             ; Modified Berendsen (Correct Ensemble)
+tc-grps     = Protein Non-Protein   ; Separate coupling groups
+tau_t       = 0.5     0.5           ; Coupling constant (ps)
+ref_t       = 310     310           ; Temperature (K)
+
+; Pressure Coupling
+pcoupl      = no        ; No pressure coupling in NVT
+
+; Velocity Generation
+gen_vel     = yes       ; Generate velocities from Maxwell dist.
+gen_temp    = 310       ; Temperature for generation
+gen_seed    = -1        ; Random seed

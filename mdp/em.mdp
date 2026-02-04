@@ -1,0 +1,38 @@
+; em.mdp - Energy Minimization
+; ------------------------------------------------
+
+; Minimization Options
+integrator  = steep         ; Steepest descent algorithm
+emtol       = 500.0         ; Stop minimization when the maximum force < 500.0 kJ/mol/nm
+emstep      = 0.01          ; Initial step size (0.01 nm is standard/robust)
+nsteps      = 50000         ; Maximum number of (minimization) steps to perform
+
+; Output Control
+nstxout     = 500           ; Save coordinates every 500 steps
+nstlog      = 500           ; Update log every 500 steps
+nstenergy   = 500           ; Save energy every 500 steps
+
+; Bond Constraints to keep water rigid during EM to prevent distortions
+constraint_algorithm = lincs        ; Holonomic constraints 
+constraints          = h-bonds      ; Constrain bonds involving H
+lincs_iter           = 1            ; accuracy of LINCS
+lincs_order          = 4
+
+; Neighbor Searching
+cutoff-scheme = Verlet
+nstlist       = 20      ; Update neighbor list every 20 steps
+rlist         = 1.2     ; Neighbor list cutoff
+pbc           = xyz     ; 3D Periodic Boundary Conditions
+
+; Electrostatics
+coulombtype     = PME       ; Particle Mesh Ewald for long-range electrostatics
+rcoulomb        = 1.2       ; Short-range electrostatic cut-off
+pme_order       = 4         ; cubic interpolation
+fourierspacing  = 0.12      ; grid spacing for FFT
+
+; Van der Waals - CHARMM36 SPECIFIC
+vdwtype         = cutoff
+vdw-modifier    = force-switch      ; Smooth switching for VdW
+rvdw-switch     = 1.0               ; Switch starts at 1.0 nm
+rvdw            = 1.2               ; Cut-off ends at 1.2 nm
+DispCorr        = no                ; CHARMM36 does not use dispersion correction
